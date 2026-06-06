@@ -1,0 +1,11 @@
+task_id,name,priority,deadline,exec_time,profit
+1,Feature A,8,5,2,80
+2,Feature B,6,4,1,60
+3,Bug Fix Critical,10,2,1,100
+4,Unit Tests,4,6,2,40
+5,Code Review,5,3,1,50
+6,Deploy Staging,7,4,2,70
+7,Documentation,3,9,3,30
+8,Security Audit,9,5,2,90
+9,Performance Test,6,7,3,65
+10,CI/CD Pipeline,7,6,2,75

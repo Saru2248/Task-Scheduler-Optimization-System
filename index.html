@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Scheduler Optimization Dashboard | DSA Course Project</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Background Gradient Grids -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo-area">
+                <i class="fa-solid fa-microchip logo-icon"></i>
+                <div>
+                    <h1>Task Scheduler <span>Optimization System</span></h1>
+                    <p class="subtitle">Data Structures & Algorithms Course Portfolio Project</p>
+                </div>
+            </div>
+            <div class="status-tags">
+                <span class="tag tag-dsa"><i class="fa-solid fa-graduation-cap"></i> Proof of Work</span>
+                <span class="tag tag-heap"><i class="fa-solid fa-tree"></i> Binary Max-Heap</span>
+                <span class="tag tag-greedy"><i class="fa-solid fa-bolt"></i> Greedy Algorithm</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <!-- TOP SECTION: Controls & Inputs -->
+        <div class="dashboard-grid">
+            
+            <!-- COLUMN 1: Inputs & Task List -->
+            <section class="glass-card col-left">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-list-check icon-accent"></i> Task Dataset Input</h2>
+                    <div class="preset-controls">
+                        <button id="btn-preset-default" class="btn btn-sm btn-outline" title="Load Standard Dataset"><i class="fa-solid fa-database"></i> Default</button>
+                        <button id="btn-preset-adv" class="btn btn-sm btn-outline" title="Load High Complexity Dataset"><i class="fa-solid fa-rocket"></i> Advanced</button>
+                        <input type="file" id="csv-upload" accept=".csv" style="display: none;">
+                        <label for="csv-upload" class="btn btn-sm btn-outline" title="Upload Custom CSV File"><i class="fa-solid fa-file-import"></i> CSV</label>
+                        <button id="btn-clear-tasks" class="btn btn-sm btn-danger" title="Clear all tasks from list"><i class="fa-solid fa-trash-can"></i> Clear</button>
+                    </div>
+                </div>
+
+                <!-- Task Creator Form with Sliders -->
+                <form id="task-form" class="task-form">
+                    <div class="form-row">
+                        <div class="form-group col-3">
+                            <label for="input-id">Task ID</label>
+                            <input type="number" id="input-id" placeholder="1" min="1" required>
+                        </div>
+                        <div class="form-group col-9">
+                            <label for="input-name">Task Name</label>
+                            <input type="text" id="input-name" placeholder="e.g. DB Backup" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row flex-column-mobile">
+                        <div class="form-group col-slider">
+                            <div class="slider-header">
+                                <label for="input-priority">Priority</label>
+                                <span class="slider-badge" id="badge-priority">5</span>
+                            </div>
+                            <input type="range" id="input-priority" min="1" max="10" value="5" class="slider-input">
+                        </div>
+                        <div class="form-group col-slider">
+                            <div class="slider-header">
+                                <label for="input-deadline">Deadline (Slots)</label>
+                                <span class="slider-badge" id="badge-deadline">5</span>
+                            </div>
+                            <input type="range" id="input-deadline" min="1" max="15" value="5" class="slider-input">
+                        </div>
+                    </div>
+
+                    <div class="form-row flex-column-mobile">
+                        <div class="form-group col-slider">
+                            <div class="slider-header">
+                                <label for="input-exec">Duration (Slots)</label>
+                                <span class="slider-badge" id="badge-exec">2</span>
+                            </div>
+                            <input type="range" id="input-exec" min="1" max="10" value="2" class="slider-input">
+                        </div>
+                        <div class="form-group col-slider">
+                            <div class="slider-header">
+                                <label for="input-profit">Profit/Score</label>
+                                <span class="slider-badge" id="badge-profit">50</span>
+                            </div>
+                            <input type="range" id="input-profit" min="10" max="200" step="5" value="50" class="slider-input">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" id="btn-add-task" class="btn btn-primary btn-block">
+                            <i class="fa-solid fa-plus-circle"></i> Add Task to List
+                        </button>
+                    </div>
+                    <div id="validation-alert" class="validation-alert hidden">
+                        <i class="fa-solid fa-triangle-exclamation"></i> <span id="validation-msg">Error</span>
+                    </div>
+                </form>
+
+                <!-- Tasks Data Table -->
+                <div class="table-container">
+                    <table id="tasks-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 8%">ID</th>
+                                <th style="width: 38%">Name</th>
+                                <th style="width: 12%">Priority</th>
+                                <th style="width: 12%">Deadline</th>
+                                <th style="width: 12%">Duration</th>
+                                <th style="width: 12%">Profit</th>
+                                <th style="width: 6%"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tasks-tbody">
+                            <!-- Injected by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- COLUMN 2: Scheduler Engine & Outputs -->
+            <section class="glass-card col-right">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-gears icon-accent"></i> Optimization Engine</h2>
+                    <div class="algo-selector-wrapper">
+                        <select id="algo-select" class="form-select">
+                            <option value="greedy">Greedy Deadline (Max Profit)</option>
+                            <option value="pq">Priority Queue (Max-Heap order)</option>
+                            <option value="edf">Earliest Deadline First (EDF)</option>
+                            <option value="sjf">Shortest Job First (SJF)</option>
+                            <option value="combined">Combined Score (Weighted)</option>
+                        </select>
+                        <button id="btn-run" class="btn btn-accent"><i class="fa-solid fa-play"></i> Run</button>
+                        <button id="btn-compare" class="btn btn-secondary"><i class="fa-solid fa-chart-simple"></i> Compare All</button>
+                    </div>
+                </div>
+
+                <!-- Weighted Scoring Settings (Visible only when Combined selected) -->
+                <div id="combined-weights-panel" class="combined-weights-panel hidden">
+                    <h4>Adjust Sorter Weights:</h4>
+                    <div class="weights-grid">
+                        <div class="weight-item">
+                            <label>Priority Weight (w1): <span id="lbl-w-priority">0.3</span></label>
+                            <input type="range" id="weight-priority" min="0" max="1" step="0.1" value="0.3">
+                        </div>
+                        <div class="weight-item">
+                            <label>Deadline Weight (w2): <span id="lbl-w-deadline">0.3</span></label>
+                            <input type="range" id="weight-deadline" min="0" max="1" step="0.1" value="0.3">
+                        </div>
+                        <div class="weight-item">
+                            <label>Profit Weight (w3): <span id="lbl-w-profit">0.4</span></label>
+                            <input type="range" id="weight-profit" min="0" max="1" step="0.1" value="0.4">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulation Output Tabs -->
+                <div class="tab-control">
+                    <button class="tab-btn active" data-tab="tab-timeline"><i class="fa-solid fa-chart-gantt"></i> Gantt Timeline</button>
+                    <button class="tab-btn" data-tab="tab-heap"><i class="fa-solid fa-sitemap"></i> Max-Heap Tree</button>
+                    <button class="tab-btn" data-tab="tab-trace"><i class="fa-solid fa-list-ol"></i> Step Tracer</button>
+                    <button class="tab-btn" data-tab="tab-comparison"><i class="fa-solid fa-chart-pie"></i> Metrics & Comparison</button>
+                </div>
+
+                <div class="tab-content-container">
+                    
+                    <!-- TAB 1: Gantt Timeline -->
+                    <div id="tab-timeline" class="tab-content active">
+                        <!-- Summary KPIs -->
+                        <div class="kpi-grid">
+                            <div class="kpi-card">
+                                <div class="kpi-val text-profit" id="kpi-profit">$0</div>
+                                <div class="kpi-lbl">Total Profit Earned</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-val text-rate" id="kpi-rate">0%</div>
+                                <div class="kpi-lbl">Completion Rate</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-val text-scheduled" id="kpi-scheduled">0/0</div>
+                                <div class="kpi-lbl">Scheduled Tasks</div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-val text-time" id="kpi-time">0 slots</div>
+                            </div>
+                        </div>
+
+                        <!-- Gantt Visual Chart -->
+                        <h3>Timeline Visualizer (non-preemptive execution slots)</h3>
+                        <div class="gantt-wrapper">
+                            <div class="gantt-chart" id="gantt-chart">
+                                <!-- Gantt blocks injected here -->
+                            </div>
+                        </div>
+
+                        <!-- Scheduled/Missed details lists -->
+                        <div class="detail-split">
+                            <div class="detail-block block-ok">
+                                <h4>Scheduled Tasks</h4>
+                                <ul class="details-list" id="list-scheduled">
+                                    <!-- Injected -->
+                                </ul>
+                            </div>
+                            <div class="detail-block block-miss">
+                                <h4>Missed Tasks (Deadlines Violated)</h4>
+                                <ul class="details-list" id="list-missed">
+                                    <!-- Injected -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: Heap Visualizer -->
+                    <div id="tab-heap" class="tab-content">
+                        <div class="heap-info">
+                            <p><i class="fa-solid fa-circle-info"></i> This view renders the internal array storage structure of our custom **Binary Max-Heap Priority Queue**. Nodes are ordered by **Profit** so that the highest profit task stays at the root ($i = 0$).</p>
+                        </div>
+                        <div class="heap-tree-container">
+                            <div class="heap-tree" id="heap-tree-root">
+                                <!-- Tree structure dynamically rendered here -->
+                            </div>
+                        </div>
+                        <div class="heap-array-view">
+                            <h4>Heap Flat Array Representation:</h4>
+                            <div class="heap-array" id="heap-array-list">
+                                <!-- [Task ID | Profit] slots -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: Execution Trace -->
+                    <div id="tab-trace" class="tab-content">
+                        <div class="heap-info">
+                            <p><i class="fa-solid fa-history"></i> Step-by-Step allocation trace of the active scheduling run, demonstrating the decision pattern of the optimizer.</p>
+                        </div>
+                        <div class="trace-log" id="trace-log-list">
+                            <!-- Injected log entries -->
+                        </div>
+                    </div>
+
+                    <!-- TAB 4: Comparison Matrix -->
+                    <div id="tab-comparison" class="tab-content">
+                        <h3>Cross-Algorithm Performance Metrics</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Algorithm</th>
+                                        <th>Scheduled</th>
+                                        <th>Missed</th>
+                                        <th>Total Profit</th>
+                                        <th>Completion Rate</th>
+                                        <th>Exec Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="comparison-tbody">
+                                    <!-- Comparison Rows Injected -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="chart-section">
+                            <h4>Profit Comparison Bar Chart</h4>
+                            <div class="bar-chart-container" id="bar-chart-profit">
+                                <!-- Injected custom CSS-based bar chart -->
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+
+        <!-- EDUCATIONAL SECTION: Interviews & DSA Concepts -->
+        <section class="glass-card educational-section">
+            <div class="card-header">
+                <h2><i class="fa-solid fa-graduation-cap icon-accent"></i> Interview Prep & DSA Mechanics</h2>
+            </div>
+            
+            <div class="faq-accordion">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Explain your Task Scheduler Optimization System.</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p><strong>Answer:</strong> This project is a task scheduling optimization system that resolves CPU/thread execution bottleneck issues. In real-world computing, jobs are loaded with strict deadlines and vary in execution length and importance (profit). When overloaded, processing jobs on a FIFO basis leads to system degradation. This system implements four scheduling algorithms: Greedy Deadline Job Scheduling, Priority Queue Scheduling, Earliest Deadline First (EDF), and Shortest Job First (SJF). It visualizes scheduling metrics in a Gantt-style timeline and showcases binary heap array index calculation mechanics.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>How does a Binary Max-Heap operate, and what are its complexities?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p><strong>Answer:</strong> A Binary Heap is a complete binary tree stored inside a contiguous array. In a Max-Heap, every parent node's value must be greater than or equal to its children's values. The index relationships are:</p>
+                        <ul>
+                            <li>Parent of index $i$: <code>Math.floor((i - 1) / 2)</code></li>
+                            <li>Left child of index $i$: <code>2 * i + 1</code></li>
+                            <li>Right child of index $i$: <code>2 * i + 2</code></li>
+                        </ul>
+                        <p><strong>Runtimes:</strong> Insertion is $O(\log n)$ by appending to the end and performing a <em>bubble up</em> operation. Extracting the maximum value is $O(\log n)$ by swapping the root with the last element, popping it, and performing a <em>bubble down</em> operation. Peeking is $O(1)$.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Why does the Greedy Deadline Scheduler produce the highest profit?</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p><strong>Answer:</strong> The Greedy Deadline Scheduler is an implementation of the classic <strong>Job Sequencing Problem with Deadlines</strong>. By sorting all tasks by profit in descending order, we iteratively choose the most valuable task first. To leave early time slots open for other tasks with tighter deadlines, we schedule each selected task in its latest possible free slot before its deadline. This greedy choice holds the optimal substructure property and yields the maximum possible total profit.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="app-footer">
+        <p>Built as a Premium DSA Portfolio Project. Fully executable on CLI (Python) and Web browser (HTML/CSS/JS).</p>
+    </footer>
+
+    <!-- Script Import -->
+    <script src="app.js"></script>
+</body>
+</html>
