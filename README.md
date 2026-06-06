@@ -3,7 +3,7 @@
 ![Python](https://img.shields.io/badge/Python-3.8%2B-blue)
 ![DSA](https://img.shields.io/badge/Data%20Structures%20%26%20Algorithms-Project-green)
 ![Scheduling](https://img.shields.io/badge/Scheduling-Optimization-orange)
-
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
 A comprehensive **Data Structures & Algorithms (DSA)** project that simulates real-world task scheduling and resource allocation systems used in **Operating Systems, Cloud Computing Platforms, Distributed Systems, and Project Management Applications**.
 
@@ -546,5 +546,3 @@ Focused on:
 ---
 
 ## ⭐ If you found this project useful, consider giving it a star on GitHub!
-#   T a s k - S c h e d u l e r - O p t i m i z a t i o n - S y s t e m  
- 
